@@ -5,4 +5,4 @@ yamlファイルを読み込み、その構造を再現するstructとそのフ�
 
 ## 使い方
 
-このリポジトリをsubmoduleで入れるなどして、 [example/CMakeLists.txt](example/CMakeLists.txt)のようにする
+このリポジトリをsubmoduleで入れるなどして、 [example/CMakeLists.txt](example/CMakeLists.txt) のようにすると、 [example/main.cpp](example/main.cpp) のようにyamlファイルの内容にアクセスすることができます
