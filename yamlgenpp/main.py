@@ -16,12 +16,10 @@ except ImportError as e:
 def snake_case(s: str) -> str:
     if not re.match(r"^[A-Za-z0-9_\-\s]+$", s):
         raise ValueError(
-            f"'{s}' contains invalid characters. Only letters, numbers, spaces, hyphens, and underscores are allowed."
+            f"'{s}' contains invalid characters. "
+            + "Only letters, numbers, spaces, hyphens, and underscores are allowed."
         )
-    s = s.replace("-", " ").replace("_", " ")
-    s = re.sub(r"(?<=[a-z])([A-Z])", r" \1", s)
-    words = s.lower().split()
-    return "_".join(words)
+    return s.replace("-", "_").replace(" ", "_")
 
 
 def generate(data, name: str, abs_path: str) -> Tuple[str, str]:
