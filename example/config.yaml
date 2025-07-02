@@ -1,0 +1,4 @@
+project:
+  name: "yamlgenpp"
+  version: "0.1.0"
+  description: "YAML to C++ struct generator"

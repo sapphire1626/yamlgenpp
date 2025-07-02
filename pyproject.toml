@@ -1,0 +1,16 @@
+[tool.poetry]
+name = "yamlgenpp"
+version = "0.1.0"
+description = "YAML to C++ struct generator"
+authors = ["na-trium-144 <100704180+na-trium-144@users.noreply.github.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+pyyaml = "^6.0.2"
+
+[tool.poetry.scripts]
+yamlgenpp = 'yamlgenpp.main:main'
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
