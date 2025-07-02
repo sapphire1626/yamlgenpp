@@ -74,7 +74,7 @@ def write_field(key: str, value, depth: List[str]) -> FieldOutput:
         )
         cpp_body_current = ""
         for sub_key, sub_value in dictvalue.items():
-            sub_out = write_field(sub_key, sub_value, depth + [key])
+            sub_out = write_field(str(sub_key), sub_value, depth + [key])
             out.hpp_prepend += sub_out.hpp_prepend
             out.cpp_prepend += sub_out.cpp_prepend
             hpp_prepend_current += sub_out.hpp_inline
@@ -101,11 +101,11 @@ def write_field(key: str, value, depth: List[str]) -> FieldOutput:
         has_float = False
         has_bool = False
         for v in value:
-            has_str = has_str or isinstance(value, str)
-            has_float = has_float or isinstance(value, float) or isinstance(value, int)
-            has_bool = has_bool or isinstance(value, bool)
+            has_str = has_str or isinstance(v, str)
+            has_float = has_float or isinstance(v, float) or isinstance(v, int)
+            has_bool = has_bool or isinstance(v, bool)
             if isinstance(v, list):
-                print("list of list is not supported yet (TODO)")
+                print(f"Error parsing key '{".".join(depth + [key])}': list of list is not supported yet")
                 sys.exit(1)
             if isinstance(v, dict):
                 has_dict = True
@@ -113,7 +113,9 @@ def write_field(key: str, value, depth: List[str]) -> FieldOutput:
                     dict_merged[sub_key] = sub_value
         if has_dict:
             prepend_dict_node(dict_merged)
-        if int(has_str) + int(has_float) + int(has_bool) + int(has_dict) == 1:
+        if not value:
+            print(f"Warning: key '{".".join(depth + [key])}' is empty list")
+        elif int(has_str) + int(has_float) + int(has_bool) + int(has_dict) == 1:
             if has_dict:
                 out.hpp_inline = (
                     f"  std::vector<{snake_case(key)}_::dict> {snake_case(key)};\n"
@@ -141,14 +143,15 @@ def write_field(key: str, value, depth: List[str]) -> FieldOutput:
                     + "key.emplace_back(value.as<bool>());\n"
                 )
         else:
-            print("list of mixed value is not supported yet (TODO)")
+            print(f"Error parsing key '{".".join(depth + [key])}': list of mixed value is not supported yet (TODO)")
             sys.exit(1)
     elif isinstance(value, dict):
         out.hpp_inline = f"  {snake_case(key)}_::dict {snake_case(key)};\n"
         out.cpp_inline = f'  {snake_case(key)}(node["{key}"]),\n'
         prepend_dict_node(value)
     else:
-        raise TypeError(f"Unsupported type for key '{key}': {type(value)}")
+        print(f"Error parsing key '{".".join(depth + [key])}': unsupported type '{type(value)}'")
+        sys.exit(1)
 
     return out
 
@@ -174,18 +177,21 @@ def main():
             with open(file, "r", encoding="utf-8") as f:
                 data = yaml.safe_load(f)
                 if data is None:
-                    print(f"Warning: The file '{file}' is empty.")
-                else:
-                    name = basename(splitext(file)[0])
-                    hpp, cpp = generate(data, name, abspath(file))
-                    with open(
-                        f"{args.dest}/{name}.hpp", "w", encoding="utf-8"
-                    ) as out_f:
-                        out_f.write(hpp)
-                    with open(
-                        f"{args.dest}/{name}.cpp", "w", encoding="utf-8"
-                    ) as out_f:
-                        out_f.write(cpp)
+                    print(f"Warning: The file '{file}' is empty")
+                    data = {}
+                elif not isinstance(data, dict):
+                    print(f"The file '{file}' does not contain a YAML dictionary")
+                    sys.exit(1)
+                name = basename(splitext(file)[0])
+                hpp, cpp = generate(data, name, abspath(file))
+                with open(
+                    f"{args.dest}/{name}.hpp", "w", encoding="utf-8"
+                ) as out_f:
+                    out_f.write(hpp)
+                with open(
+                    f"{args.dest}/{name}.cpp", "w", encoding="utf-8"
+                ) as out_f:
+                    out_f.write(cpp)
         except FileNotFoundError:
             print(f"The file '{file}' does not exist.")
             sys.exit(1)
