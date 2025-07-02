@@ -42,10 +42,14 @@ def main():
                     print(f"The file '{file}' does not contain a YAML dictionary")
                     sys.exit(1)
                 name = basename(splitext(file)[0])
-                hpp, cpp = generate(data, name, abspath(file))
-                with open(f"{args.dest}/{name}.hpp", "w", encoding="utf-8") as out_f:
+                hpp, cpp = generate(data, name, basename(file), abspath(file))
+                with open(
+                    f"{args.dest}/{basename(file)}.hpp", "w", encoding="utf-8"
+                ) as out_f:
                     out_f.write(hpp)
-                with open(f"{args.dest}/{name}.cpp", "w", encoding="utf-8") as out_f:
+                with open(
+                    f"{args.dest}/{basename(file)}.cpp", "w", encoding="utf-8"
+                ) as out_f:
                     out_f.write(cpp)
         except FileNotFoundError:
             print(f"The file '{file}' does not exist.")

@@ -20,7 +20,7 @@ endif()
 function(add_yamlgenpp_target TARGET)
     set(CPP_SOURCES )
     foreach(SOURCE ${ARGN})
-        get_filename_component(SOURCE_NAME ${SOURCE} NAME_WE)
+        get_filename_component(SOURCE_NAME ${SOURCE} NAME)
         list(APPEND CPP_SOURCES
             ${CMAKE_CURRENT_BINARY_DIR}/yamlgenpp/${SOURCE_NAME}.cpp
             ${CMAKE_CURRENT_BINARY_DIR}/yamlgenpp/${SOURCE_NAME}.hpp
@@ -30,7 +30,7 @@ function(add_yamlgenpp_target TARGET)
         OUTPUT ${CPP_SOURCES}
         COMMAND ${YAMLGENPP_COMMAND} ${ARGN} -d ${CMAKE_CURRENT_BINARY_DIR}/yamlgenpp
         DEPENDS ${ARGN}
-        COMMENT "Generating yamlgenpp struct"
+        COMMENT "Generating ${TARGET} with yamlgenpp"
     )
     add_library(${TARGET} OBJECT ${CPP_SOURCES})
     target_include_directories(${TARGET} PUBLIC ${CMAKE_CURRENT_BINARY_DIR}/yamlgenpp)

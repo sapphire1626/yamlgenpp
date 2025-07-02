@@ -1,6 +1,6 @@
 #include <iostream>
 
-#include "config.hpp"
+#include "config.yaml.hpp"
 
 int main() {
   std::cout << "config.project.name = '" << config.project.name << "'"
