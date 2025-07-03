@@ -1,6 +1,6 @@
 import argparse
 import sys
-from os.path import basename, splitext, abspath
+from os.path import basename, splitext, abspath, exists
 
 try:
     from .generator import generate
@@ -43,14 +43,22 @@ def main():
                     sys.exit(1)
                 name = basename(splitext(file)[0])
                 hpp, cpp = generate(data, name, basename(file), abspath(file))
-                with open(
-                    f"{args.dest}/{basename(file)}.hpp", "w", encoding="utf-8"
-                ) as out_f:
-                    out_f.write(hpp)
-                with open(
-                    f"{args.dest}/{basename(file)}.cpp", "w", encoding="utf-8"
-                ) as out_f:
-                    out_f.write(cpp)
+                hpp_file = f"{args.dest}/{basename(file)}.hpp"
+                hpp_prev = ""
+                if exists(hpp_file):
+                    with open(hpp_file, "r", encoding="utf-8") as hpp_f:
+                        hpp_prev = hpp_f.read()
+                if hpp != hpp_prev:
+                    with open(hpp_file, "w", encoding="utf-8") as hpp_f:
+                        hpp_f.write(hpp)
+                cpp_file = f"{args.dest}/{basename(file)}.cpp"
+                cpp_prev = ""
+                if exists(cpp_file):
+                    with open(cpp_file, "r", encoding="utf-8") as cpp_f:
+                        cpp_prev = cpp_f.read()
+                if cpp != cpp_prev:
+                    with open(cpp_file, "w", encoding="utf-8") as cpp_f:
+                        cpp_f.write(cpp)
         except FileNotFoundError:
             print(f"The file '{file}' does not exist.")
             sys.exit(1)
