@@ -95,7 +95,7 @@ def write_field(key: str, value, depth: List[str]) -> FieldOutput:
                 has_float = True
             elif isinstance(v, list):
                 print(
-                    f"Error parsing key '{".".join(depth + [key])}': list of list is not supported yet"
+                    f"Error parsing key '{'.'.join(depth + [key])}': list of list is not supported yet"
                 )
                 sys.exit(1)
             elif isinstance(v, dict):
@@ -105,7 +105,7 @@ def write_field(key: str, value, depth: List[str]) -> FieldOutput:
         if has_dict:
             prepend_dict_node(dict_merged)
         if not value:
-            print(f"Warning: key '{".".join(depth + [key])}' is empty list")
+            print(f"Warning: key '{'.'.join(depth + [key])}' is empty list")
         elif int(has_str) + int(has_float) + int(has_bool) + int(has_dict) == 1:
             if has_dict:
                 out.hpp_inline = (
@@ -139,7 +139,7 @@ def write_field(key: str, value, depth: List[str]) -> FieldOutput:
                 )
         else:
             print(
-                f"Error parsing key '{".".join(depth + [key])}': list of mixed value is not supported yet (TODO)"
+                f"Error parsing key '{'.'.join(depth + [key])}': list of mixed value is not supported yet (TODO)"
             )
             sys.exit(1)
     elif isinstance(value, dict):
@@ -150,7 +150,7 @@ def write_field(key: str, value, depth: List[str]) -> FieldOutput:
         prepend_dict_node(value)
     else:
         print(
-            f"Error parsing key '{".".join(depth + [key])}': unsupported type '{type(value)}'"
+            f"Error parsing key '{'.'.join(depth + [key])}': unsupported type '{type(value)}'"
         )
         sys.exit(1)
 
